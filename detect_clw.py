@@ -1,0 +1,121 @@
+import os
+from data import COCODetection, MEANS, COLORS, COCO_CLASSES
+from yolact import Yolact
+from utils.augmentations import BaseTransform, FastBaseTransform, Resize
+from utils.functions import MovingAverage, ProgressBar
+from layers.box_utils import jaccard, center_size
+from utils import timer
+from utils.functions import SavePath
+from layers.output_utils import postprocess, undo_image_transformation
+import pycocotools
+
+from data import cfg, set_cfg, set_dataset
+
+import numpy as np
+import torch
+import torch.backends.cudnn as cudnn
+from torch.autograd import Variable
+import argparse
+import time
+import random
+import cProfile
+import pickle
+import json
+import os
+from pathlib import Path
+from collections import OrderedDict
+from PIL import Image
+import cv2
+from tqdm import tqdm
+
+import matplotlib.pyplot as plt
+import time
+
+import numpy as np
+import numba
+from numba import jit
+
+
+# 传入jit，numba装饰器中的一种
+@jit(nopython=True)
+def get_outline_from_mask(pear_mask_np, w, h):
+    pear_outline = np.zeros_like(pear_mask_np)
+    for i, line in enumerate(pear_mask_np):
+        for j, point in enumerate(line):
+            if i != 0 and i != h - 1 and j != 0 and j != w - 1:  # 图像边缘位置不做判断，这样也能适应比如梨只有一部分在图片内的情形；
+                if point == 1 and (line[j - 1] == 0 or line[j + 1] == 0 or line[i - 1] == 0 or line[i + 1] == 0):  # 边缘
+                    pear_outline[i][j] = 1
+    return pear_outline
+
+# 传入jit，numba装饰器中的一种
+@jit(nopython=True)
+def compute_roundness(pear_outline):
+
+
+
+# run your code
+def detect(img_path, save_path):
+    net.detect.cross_class_nms = True
+    net.detect.use_fast_nms = True
+    cfg.mask_proto_debug = False
+
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
+
+    img_names = [name for name in os.listdir(img_path) if name.endswith('.jpg') or name.endswith('.png')]
+    #for img_name in tqdm(img_names):
+    for img_name in img_names:
+        img = cv2.imread(os.path.join(img_path, img_name))
+        img = torch.from_numpy(img).cuda().float()
+        img = FastBaseTransform()(img.unsqueeze(0))
+        start = time.time()
+        preds = net(img)
+        print('clw: image_name: %s, inference time use %.3fs' % (img_name, time.time() - start))  # inference time use 0.023s, 550x550
+
+        # start = time.time()
+        h, w = img.shape[2:]
+        result = postprocess(preds, w, h, crop_masks=True, score_threshold=0.3)  # classes, scores, boxes, masks 按照score排序
+        # top_k = 10
+        # classes, scores, boxes, masks = [x[:top_k].cpu().numpy() for x in result]  # clw note TODO: 是否有必要只取top_k个？
+        # print('clw: postprocess time use %.3fs' % (time.time() - start))  # 0.001s
+
+
+        ### 顺序遍历result[0]，找到第一个是0的值，也就是梨，也就拿到了相应的mask
+        # start = time.time()
+        bFindPear = False
+        for i, cls_id in enumerate(result[0]):
+            if cls_id == 0 and not bFindPear:
+                pear_mask = result[3][i].cpu().numpy()
+                bFindPear = True
+
+        # 从梨的mask中提取轮廓
+        pear_outline = get_outline_from_mask(pear_mask, w, h)
+        # print('pear_mask.sum:', pear_mask.sum())     # 124250.0
+        # print('pear_outline.sum:', pear_outline.sum())  # 34335.0
+        # print('clw: outline extract time use %.3fs' % (time.time() - start))  # 0.001s
+        ###
+
+
+
+if __name__ == '__main__':
+    set_cfg('pear_config')
+    with torch.no_grad():
+        torch.cuda.set_device(0)
+
+        ######
+        # If the input image size is constant, this make things faster (hence why we can use it in a video setting).
+        # cudnn.benchmark = True
+        # cudnn.fastest = True
+        torch.set_default_tensor_type('torch.cuda.FloatTensor')
+        ######
+
+        net = Yolact()
+        net.load_weights('./weights/yolact_darknet53_1176_20000.pth')
+        net.eval()
+        net = net.cuda()
+        print('model loaded...')
+        detect('/home/user/dataset/pear/val/JPEGImages', '/home/user/pear_output')
+
+
+
+print('end!')

@@ -686,3 +686,29 @@ class SSDAugmentation(object):
 
     def __call__(self, img, masks, boxes, labels):
         return self.augment(img, masks, boxes, labels)
+
+
+# clw modify: TODO：这里还可以加入更多的在线数据增强方法，如：随机遮挡、mosaic、旋转平移、甚至mixup.....；
+#                   更简单地，加一些离线的，不需要改变标注框的增强，如运动模糊、风格迁移等；
+class YOLOAugmentation(object):
+    """ Transform to be used when training. """
+
+    def __init__(self, mean=MEANS, std=STD):
+        self.augment = Compose([
+            ConvertFromInts(),
+            ToAbsoluteCoords(),
+            enable_if(cfg.augment_photometric_distort, PhotometricDistort()),  # 光照度扭曲
+            enable_if(cfg.augment_expand, Expand(mean)),  # clw note：大object通过expand方法的处理可以变成小尺度的物体训练。提高ssd对尺度的泛化性
+            #enable_if(cfg.augment_random_sample_crop, RandomSampleCrop()),  # clw note TODO: 梨轮廓检测个人认为最好禁用crop操作，否则轮廓box会被crop，造成圆度检测不准确！
+            enable_if(cfg.augment_random_mirror, RandomMirror()),
+            enable_if(cfg.augment_random_flip, RandomFlip()),
+            enable_if(cfg.augment_random_rot90, RandomRot90()),
+            Resize(),
+            enable_if(not cfg.preserve_aspect_ratio, Pad(cfg.max_size, cfg.max_size, mean)),
+            ToPercentCoords(),
+            PrepareMasks(cfg.mask_size, cfg.use_gt_bboxes),
+            BackboneTransform(cfg.backbone.transform, mean, std, 'BGR')
+        ])
+
+    def __call__(self, img, masks, boxes, labels):
+        return self.augment(img, masks, boxes, labels)

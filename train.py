@@ -1,5 +1,5 @@
 from data import *
-from utils.augmentations import SSDAugmentation, BaseTransform
+from utils.augmentations import SSDAugmentation, YOLOAugmentation, BaseTransform  # clw add YOLOAugmentation
 from utils.functions import MovingAverage, SavePath
 from utils.logger import Log
 from utils import timer
@@ -174,7 +174,8 @@ def train():
 
     dataset = COCODetection(image_path=cfg.dataset.train_images,
                             info_file=cfg.dataset.train_info,
-                            transform=SSDAugmentation(MEANS))
+                            #transform=SSDAugmentation(MEANS))
+                            transform=YOLOAugmentation(MEANS))
     # print('clw:image_path:', cfg.dataset.train_images)
     # print('clw:info_file:', cfg.dataset.train_info)
 

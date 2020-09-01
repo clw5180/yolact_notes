@@ -698,7 +698,8 @@ yolact_base_config = coco_base_config.copy({
         'use_square_anchors': True, # This is for backward compatability with a bug
 
         'pred_aspect_ratios': [ [[1, 1/2, 2]] ]*5,
-        'pred_scales': [[24], [48], [96], [192], [384]],
+        'pred_scales': [[24], [48], [96], [192], [384]],   # clw TODO： 这里anchor的选择还可以用kmeans之类的做一下；这样比较普适
+                                                           #            另外注意到如果尺寸不是550x550，应该还需要改这里的anchor大小；
     }),
 
     # FPN Settings
@@ -718,8 +719,11 @@ yolact_base_config = coco_base_config.copy({
     'share_prediction_module': True,
     'extra_head_net': [(256, 3, {'padding': 1})],
 
+    # 'positive_iou_threshold': 0.5,
+    # 'negative_iou_threshold': 0.4,
+
     'positive_iou_threshold': 0.5,
-    'negative_iou_threshold': 0.4,
+    'negative_iou_threshold': 0.5,  # clw modify: TODO, yolov3 set like this; faster rcnn is 0.7 and 0.3;
 
     'crowd_iou_threshold': 0.7,
 
@@ -804,10 +808,12 @@ pear_config = yolact_base_config.copy({
     'max_size': 550,
     #'max_size':256,
     # Training params
-    # 'lr_steps': (2800, 6000, 7000, 7500),
+    # 'lr_steps': (6500, 7500), # clw modify
     # 'max_iter': 8000,
-    'lr_steps': (10000, 16000, 18000, 19000),
+    'lr_steps': (16000, 18000), # clw modify
     'max_iter': 20000,
+    # 'lr_steps': (10000, 16000, 18000, 19000),  # clw modify
+    # 'max_iter': 20000,
 
     'backbone': darknet53_backbone.copy({
         'selected_layers': list(range(2, 5)),
@@ -831,7 +837,8 @@ yolact_plus_base_config = yolact_base_config.copy({
         'selected_layers': list(range(1, 4)),
         
         'pred_aspect_ratios': [ [[1, 1/2, 2]] ]*5,
-        'pred_scales': [[i * 2 ** (j / 3.0) for j in range(3)] for i in [24, 48, 96, 192, 384]],
+        #'pred_scales': [[i * 2 ** (j / 3.0) for j in range(3)] for i in [24, 48, 96, 192, 384]],
+        'pred_scales': [ i for i in [8, 16, 32, 64, 128, 256, 512]],
         'use_pixel_scales': True,
         'preapply_sqrt': False,
         'use_square_anchors': False,

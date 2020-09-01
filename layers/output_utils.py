@@ -19,8 +19,8 @@ def postprocess(det_output, w, h, batch_idx=0, interpolation_mode='bilinear',
     accounting for all the possible configuration settings.
 
     Args:
-        - det_output: The lost of dicts that Detect outputs.
-        - w: The real with of the image.
+        - det_output: The list of dicts that Detect outputs.
+        - w: The real width of the image.
         - h: The real height of the image.
         - batch_idx: If you have multiple images for this batch, the image's index in the batch.
         - interpolation_mode: Can be 'nearest' | 'area' | 'bilinear' (see torch.nn.functional.interpolate)
@@ -70,7 +70,7 @@ def postprocess(det_output, w, h, batch_idx=0, interpolation_mode='bilinear',
         masks = cfg.mask_proto_mask_activation(masks)
 
         # Crop masks before upsampling because you know why
-        if crop_masks:
+        if crop_masks:    # clw note TODO: why??
             masks = crop(masks, boxes)
 
         # Permute into the correct output shape [num_dets, proto_h, proto_w]

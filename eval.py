@@ -344,8 +344,8 @@ class Detections:
             (self.mask_data, args.mask_det_file)
         ]
 
-        aaa = np.max(self.mask_data[0]['segmentation_clw'])
-        bbb = np.sum(self.mask_data[0]['segmentation_clw'])
+        # aaa = np.max(self.mask_data[0]['segmentation_clw'])
+        # bbb = np.sum(self.mask_data[0]['segmentation_clw'])
         for data, path in dump_arguments:
             with open(path, 'w') as f:
                 json.dump(data, f)
