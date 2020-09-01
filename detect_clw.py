@@ -48,9 +48,22 @@ def get_outline_from_mask(pear_mask_np, w, h):
     return pear_outline
 
 # 传入jit，numba装饰器中的一种
-@jit(nopython=True)
+#@jit(nopython=True)
 def compute_roundness(pear_outline):
+    x, y = np.where(pear_outline == 1)
+    #x_ctr = x.mean()  # 正常应该0~360度每个角度取一个点，否则比如有些地方锯齿比较多，那么点就比较多，计算中心点时权重就会往这边偏，导致结果不准确
+    #y_ctr2 = y.mean()
+    x_ctr = (x.max() + x.min()) / 2  # 算下来其实和直接取均值差不多
+    y_ctr = (y.max() + y.min()) / 2
+    distance = np.sqrt((x - x_ctr) * (x - x_ctr) + (y - y_ctr) * (y - y_ctr))
+    # 测量圆度方法1：（不好）
+    # dis_min = distance.min()
+    # dis_max = distance.max()
+    # print('圆度:', dis_max - dis_min)
 
+    # 测量圆度方法2： Σr/N·R计算求出.R为该颗粒轮廓内最大半径
+    print('圆度:', distance.mean() / distance.max() )
+    print('end')
 
 
 # run your code
@@ -93,6 +106,7 @@ def detect(img_path, save_path):
         # print('pear_mask.sum:', pear_mask.sum())     # 124250.0
         # print('pear_outline.sum:', pear_outline.sum())  # 34335.0
         # print('clw: outline extract time use %.3fs' % (time.time() - start))  # 0.001s
+        roundness = compute_roundness(pear_outline)
         ###
 
 
@@ -114,7 +128,7 @@ if __name__ == '__main__':
         net.eval()
         net = net.cuda()
         print('model loaded...')
-        detect('/home/user/dataset/pear/val/JPEGImages', '/home/user/pear_output')
+        detect('/home/user/dataset/pear/train/JPEGImages', '/home/user/pear_output')
 
 
 
