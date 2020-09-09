@@ -699,7 +699,7 @@ class YOLOAugmentation(object):
             ToAbsoluteCoords(),
             enable_if(cfg.augment_photometric_distort, PhotometricDistort()),  # 光照度扭曲
             enable_if(cfg.augment_expand, Expand(mean)),  # clw note：大object通过expand方法的处理可以变成小尺度的物体训练。提高ssd对尺度的泛化性
-            #enable_if(cfg.augment_random_sample_crop, RandomSampleCrop()),  # clw note TODO: 梨轮廓检测个人认为最好禁用crop操作，否则轮廓box会被crop，造成圆度检测不准确！
+            enable_if(cfg.augment_random_sample_crop, RandomSampleCrop()),  # clw note TODO: 梨轮廓检测个人认为最好禁用crop操作，否则轮廓box会被crop，造成圆度检测不准确！
             enable_if(cfg.augment_random_mirror, RandomMirror()),
             enable_if(cfg.augment_random_flip, RandomFlip()),
             enable_if(cfg.augment_random_rot90, RandomRot90()),

@@ -808,10 +808,10 @@ pear_config = yolact_base_config.copy({
     'max_size': 550,
     #'max_size':256,
     # Training params
-    # 'lr_steps': (6500, 7500), # clw modify
-    # 'max_iter': 8000,
-    'lr_steps': (16000, 18000), # clw modify
-    'max_iter': 20000,
+    'lr_steps': (6500, 7500), # clw modify
+    'max_iter': 8000,
+    # 'lr_steps': (16000, 18000), # clw modify
+    # 'max_iter': 20000,
     # 'lr_steps': (10000, 16000, 18000, 19000),  # clw modify
     # 'max_iter': 20000,
 

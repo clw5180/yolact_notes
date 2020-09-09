@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="1e6b81d2-ac1e-4032-a1a7-71c8769e194e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/detect_clw.py" beforeDir="false" afterPath="$PROJECT_DIR$/detect_clw.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/detect_clw.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/layers/output_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/layers/output_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/augmentations.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/augmentations.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,7 +27,7 @@
   <component name="ProjectId" id="1gM3OOPkupOWGqiWr9UCB63MsBg" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/eval.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -136,7 +139,14 @@
       <updated>1597910600784</updated>
       <workItem from="1597910602538" duration="11514000" />
       <workItem from="1597993318920" duration="26275000" />
-      <workItem from="1598861019079" duration="15486000" />
+      <workItem from="1598861019079" duration="19452000" />
+      <workItem from="1599051802405" duration="4876000" />
+      <workItem from="1599142975214" duration="601000" />
+      <workItem from="1599200421083" duration="599000" />
+      <workItem from="1599272360930" duration="676000" />
+      <workItem from="1599288780421" duration="642000" />
+      <workItem from="1599445246386" duration="3080000" />
+      <workItem from="1599633361516" duration="2915000" />
     </task>
     <servers />
   </component>
@@ -165,19 +175,9 @@
           <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/train.py</url>
-          <line>273</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/data/coco.py</url>
           <line>72</line>
           <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/detect_clw.py</url>
-          <line>65</line>
-          <option name="timeStamp" value="19" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -185,6 +185,6 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/yolact$eval.coverage" NAME="eval Coverage Results" MODIFIED="1598341398740" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/yolact$train.coverage" NAME="train Coverage Results" MODIFIED="1598928066929" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/yolact$detect_clw.coverage" NAME="detect_clw Coverage Results" MODIFIED="1598938199308" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/yolact$detect_clw.coverage" NAME="detect_clw Coverage Results" MODIFIED="1599119213918" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

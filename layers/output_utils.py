@@ -119,7 +119,8 @@ def postprocess(det_output, w, h, batch_idx=0, interpolation_mode='bilinear',
         
         masks = full_masks
 
-    return classes, scores, boxes, masks
+    #return classes, scores, boxes, masks
+    return [classes, scores, boxes, masks]  # clw modify
 
 
     
