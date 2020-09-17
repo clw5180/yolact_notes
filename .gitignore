@@ -1,3 +1,14 @@
+# custom
+*.pth
+*.pt
+.idea
+*.jpg
+*.png
+*.bmp
+*.so
+*.swp
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

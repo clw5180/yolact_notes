@@ -48,6 +48,7 @@ def get_outline_from_mask(pear_mask_np, w, h):
                     pear_outline[i][j] = 1
     return pear_outline
 
+
 # 传入jit，numba装饰器中的一种
 #@jit(nopython=True)
 def compute_roundness(pear_outline):
@@ -66,84 +67,92 @@ def compute_roundness(pear_outline):
     print('圆度:', distance.mean() / distance.max() )
 
 
-
-def detect(img):
-    try:
-        print('======================== clw: detect of python nn start !! ================================')
-        print('img.shape:', img.shape)
-        save_path = '/home/user/pear_output'
-        weight_path = '/home/user/caoliwei/yolact/weights/20200901/yolact_darknet53_1176_20000.pth'
-
+class pear_detector(object):
+    #def __init__(self, weight_path = '/home/user/caoliwei/yolact/weights/20200901/yolact_darknet53_1176_20000.pth'):
+    def __init__(self, weight_path = 'C:/Users/user/yolact_notes/weights/yolact_darknet53_249_2000.pth',  save_path = 'C:/Users/user/yolact_notes/pear_output'):
         set_cfg('pear_config')
+        self.save_path = save_path
+        self.weight_path = weight_path
+        self.net = Yolact()
+        self.net.load_weights(self.weight_path)
+        self.net.eval()
+        self.net = self.net.cuda()
+        print('model loaded...')
 
-        with torch.no_grad():
-            torch.cuda.set_device(0)
+        self.net.detect.cross_class_nms = True
+        self.net.detect.use_fast_nms = True
 
-            ######
-            # If the input image size is constant, this make things faster (hence why we can use it in a video setting).
-            # cudnn.benchmark = True
-            # cudnn.fastest = True
-            torch.set_default_tensor_type('torch.cuda.FloatTensor')
-            ######
+    def detect(self, img):
+        try:
+            print('')
+            print('======================== clw: detect of python nn start !! ================================')
+            print('img.shape:', img.shape)
 
-            net = Yolact()
-            net.load_weights(weight_path)
-            net.eval()
-            net = net.cuda()
-            print('model loaded...')
+            with torch.no_grad():
+                torch.cuda.set_device(0)
 
+                ######
+                # If the input image size is constant, this make things faster (hence why we can use it in a video setting).
+                # cudnn.benchmark = True
+                # cudnn.fastest = True
+                torch.set_default_tensor_type('torch.cuda.FloatTensor')
+                ######
 
-            net.detect.cross_class_nms = True
-            net.detect.use_fast_nms = True
-            cfg.mask_proto_debug = False
+                cfg.mask_proto_debug = False
 
-            if not os.path.exists(save_path):
-                os.mkdir(save_path)
+                # if not os.path.exists(self.save_path):
+                #     os.mkdir(self.save_path)
 
-            #img = img[:, :, ::-1].copy()
-            img = img.copy()  # clw note: 训练的时候cv2.imread()加载进来，然后通过BackboneTransform对BGR做处理；测试的时候用FastBaseTransform也会对BGR做处理；因此应该不需要::-1的操作
-            img = torch.from_numpy(img).cuda().float()
-            img = FastBaseTransform()(img.unsqueeze(0))
-            start = time.time()
-            preds = net(img)
-            print('clw: inference time use %.3fs' % (time.time() - start))  # inference time use 0.023s, 550x550
-
-            # start = time.time()
-            h, w = img.shape[2:]
-            result = postprocess(preds, w, h, crop_masks=True, score_threshold=0.3)  # classes, scores, boxes, masks 按照score排序
-            # top_k = 10
-            # classes, scores, boxes, masks = [x[:top_k].cpu().numpy() for x in result]  # clw note TODO: 是否有必要只取top_k个？
-            # print('clw: postprocess time use %.3fs' % (time.time() - start))  # 0.001s
-
-
-            ### 顺序遍历result[0]，找到第一个是0的值，也就是梨，也就拿到了相应的mask
-            # start = time.time()
-            bFindPear = False
-            for i, cls_id in enumerate(result[0]):
-                if cls_id == 0 and not bFindPear:
-                    pear_mask = result[3][i].cpu().numpy()
-                    bFindPear = True
-
-            # 从梨的mask中提取轮廓
-            pear_outline = get_outline_from_mask(pear_mask, w, h)
-            # print('pear_mask.sum:', pear_mask.sum())     # 124250.0
-            # print('pear_outline.sum:', pear_outline.sum())  # 34335.0
-            # print('clw: outline extract time use %.3fs' % (time.time() - start))  # 0.001s
-            roundness = compute_roundness(pear_outline)
-            ###
-
-            result.append(roundness)
-    except:
-        traceback.print_exc()
-    print('======================== clw: detect of python nn end !! ================================')
+                #img = img[:, :, ::-1].copy()
+                img = img.copy()  # clw note: 训练的时候cv2.imread()加载进来，然后通过BackboneTransform对BGR做处理；测试的时候用FastBaseTransform也会对BGR做处理；因此应该不需要::-1的操作
+                img = torch.from_numpy(img).cuda().float()
+                img = FastBaseTransform()(img.unsqueeze(0))
+                start = time.time()
+                preds = self.net(img)
 
 
-    return result
+                # start = time.time()
+                h, w = img.shape[2:]
+                result = postprocess(preds, w, h, crop_masks=True, score_threshold=0.3)  # classes, scores, boxes, masks 按照score排序
+                # top_k = 10
+                # classes, scores, boxes, masks = [x[:top_k].cpu().numpy() for x in result]  # clw note TODO: 是否有必要只取top_k个？
+                # print('clw: postprocess time use %.3fs' % (time.time() - start))  # 0.001s
+                print('clw: inference time use %.3fs, item nums in result:%d' % (time.time() - start, len(result[0])))  # inference time use 0.023s, 550x550
 
-def add(a, b):
-    return a+b
+                ### 顺序遍历result[0]，找到第一个是0的值，也就是梨，也就拿到了相应的mask
+                # start = time.time()
+                bFindPear = False
+                for i, cls_id in enumerate(result[0]):
+                    if cls_id == 0 and not bFindPear:
+                        pear_mask = result[3][i].cpu().numpy()
+                        bFindPear = True
+
+                # 从梨的mask中提取轮廓
+                pear_outline = get_outline_from_mask(pear_mask, w, h)
+                # print('pear_mask.sum:', pear_mask.sum())     # 124250.0
+                # print('pear_outline.sum:', pear_outline.sum())  # 34335.0
+                # print('clw: outline extract time use %.3fs' % (time.time() - start))  # 0.001s
+                roundness = compute_roundness(pear_outline)
+                ###
+
+                result.append(roundness)
+
+        except:
+            traceback.print_exc()
+
+        print('======================== clw: detect of python nn end !! ================================')
+        print('')
+
+        return result
+
+
+
 
 if __name__ == '__main__':
-    detect()
+    img = cv2.imread(  "C:/Users/user/dataset/pear/val/JPEGImages/2020-08-19_17_35_08_087.jpg"  )
+    detector = pear_detector()
+    while(1):
+        detector.detect(img)
+
 
 

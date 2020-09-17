@@ -176,13 +176,15 @@ pascal_sbd_dataset = dataset_base.copy({
 pear_dataset = dataset_base.copy({
     'name': 'Pear',
 
-    'train_images': '/home/user/dataset/pear/train/JPEGImages',
-    'valid_images': '/home/user/dataset/pear/val/JPEGImages',
-    #'valid_images': '/home/user/dataset/pear/train/JPEGImages',
+    'train_images': 'C:/Users/user/dataset/pear/train/JPEGImages',
+    'valid_images': 'C:/Users/user/dataset/pear/val/JPEGImages',
+    # 'train_images': '/home/user/dataset/pear/train/JPEGImages',
+    # 'valid_images': '/home/user/dataset/pear/val/JPEGImages',
 
-    'train_info': '/home/user/dataset/pear/train/annotations.json',
-    'valid_info': '/home/user/dataset/pear/val/annotations.json',
-    #'valid_info': '/home/user/dataset/pear/train/annotations.json',
+    'train_info': 'C:/Users/user/dataset/pear/train/annotations.json',
+    'valid_info': 'C:/Users/user/dataset/pear/val/annotations.json',
+    # 'train_info': '/home/user/dataset/pear/train/annotations.json',
+    # 'valid_info': '/home/user/dataset/pear/val/annotations.json',
 
     #'class_names': ('pear',),  # clw note: 因为后面get_label_map() 有这样一句
                                 #           return {x+1: x+1 for x in range(len(cfg.dataset.class_names))}
@@ -808,8 +810,10 @@ pear_config = yolact_base_config.copy({
     'max_size': 550,
     #'max_size':256,
     # Training params
-    'lr_steps': (6500, 7500), # clw modify
-    'max_iter': 8000,
+    'lr_steps': (3400, 3700), # clw modify
+    #'lr_steps': (6500, 7500), # clw modify
+    'max_iter': 4000,
+    # 'max_iter': 8000,
     # 'lr_steps': (16000, 18000), # clw modify
     # 'max_iter': 20000,
     # 'lr_steps': (10000, 16000, 18000, 19000),  # clw modify
